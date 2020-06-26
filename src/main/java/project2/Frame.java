@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -18,11 +19,23 @@ public class Frame extends JFrame {
 	static JFrame f;
 	static Panel1 p1;
 	static Canvas can;
+	
 	static Point start,end;
 	static Graphics graphics;
 	static Graphics2D g;
 	
+	
+	static ArrayList<Point> pointsL = new ArrayList<Point>();
+	static ArrayList<Point> pointsPL = new ArrayList<Point>();
+	static ArrayList<Point> pointsP = new ArrayList<Point>();
+	static ArrayList<Point> pointsR = new ArrayList<Point>();
+	static ArrayList<Point> pointsO = new ArrayList<Point>();
+	
+	
 	static String MODE = new String("empty");
+	static Color lineColor=null;
+	static int lineWeight=1;
+	
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -36,48 +49,6 @@ public class Frame extends JFrame {
 		contentPane.add(can);
 		createFrame(f);
 		
-		//graphics= getGraphics();
-		//g=(Graphics2D)graphics;
-		/*
-		can.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-				start=e.getPoint();
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-		
-		});
-		can.addMouseMotionListener(new PaintDraw());
-		
-				*/
-		
-		
-		
 	}
 	public static void createFrame(JFrame f) {
 		f.setSize(700,700);
@@ -86,24 +57,6 @@ public class Frame extends JFrame {
 	}
 
 }
-/*
-public class PaintDraw implements MouseMotionListener{
-
-	@Override
-	public void mouseDragged(MouseEvent e) {
-		// TODO Auto-generated method stub
-		Frame.end=e.getPoint();
-		Frame.g.drawLine(100,100,400,400);
-		
-	}
-
-	@Override
-	public void mouseMoved(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-}*/
 
 
 
