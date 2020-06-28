@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -23,19 +24,40 @@ public class Frame extends JFrame {
 	static Point start,end;
 	static Graphics graphics;
 	static Graphics2D g;
+	static int x, y;
+
+	static Point tempS,tempE;
+	static Option newOption;
 	
+	static Vector<Option> pointsL = new Vector<Option>();
+	static Vector<Option> pointsR = new Vector<Option>();
+	static Vector<Option> pointsO = new Vector<Option>();
+
+	static ArrayList<Option> list = new ArrayList<Option>();
+	static Vector<Option> list2 = new Vector<Option>();
 	
-	static ArrayList<Point> pointsL = new ArrayList<Point>();
-	static ArrayList<Point> pointsPL = new ArrayList<Point>();
-	static ArrayList<Point> pointsP = new ArrayList<Point>();
-	static ArrayList<Point> pointsR = new ArrayList<Point>();
-	static ArrayList<Point> pointsO = new ArrayList<Point>();
+	static Option re = new Option();
 	
+	static Vector<Point> pointsPL = new Vector<Point>();
+	static Vector<Point> pointsP = new Vector<Point>();
+	static Vector<Point> pointsE = new Vector<Point>();
 	
-	static String MODE = new String("empty");
-	static Color lineColor=null;
+	static boolean sel;
+	static Option cShape;
+	static String MODE;
+	static Color lineColor=Color.BLACK;
 	static int lineWeight=1;
+	static boolean oFill=false;
+	static boolean clear=false;
 	
+	
+	
+	public Frame(){
+		MODE= new String("empty");
+		x=y=0;
+		
+
+	}
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -48,6 +70,9 @@ public class Frame extends JFrame {
 		contentPane.add(p1);
 		contentPane.add(can);
 		createFrame(f);
+		
+		
+		
 		
 	}
 	public static void createFrame(JFrame f) {
