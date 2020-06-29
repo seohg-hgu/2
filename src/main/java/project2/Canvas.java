@@ -17,6 +17,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -24,10 +25,10 @@ import javax.swing.SwingConstants;
 
 
 public class Canvas extends JPanel implements MouseListener, MouseMotionListener {
-	static JButton btnClear,btnUndo,btnRedo,btnSelect,btnEraseO;
+	static JButton btnClear,btnUndo,btnRedo,btnSelect,btnEraseO,btnResize,btnCopy,btnPaste;
 	private boolean isDrawing = false;
 	Dimension preferredSize= new Dimension(400,300);
-	
+	Option o;
 
     private Point pos=null;
     boolean resize=false;
@@ -60,12 +61,27 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		btnEraseO.setBounds(0, 0, 40, 40);
 		btnEraseO.setText("Erase");
 		
+		btnResize= new JButton("Resize");
+		btnResize.setBounds(0, 0, 40, 40);
+		btnResize.setText("Resize");
+		
+		btnCopy= new JButton("Copy");
+		btnCopy.setBounds(0, 0, 40, 40);
+		btnCopy.setText("Copy");
+		
+		btnPaste= new JButton("Paste");
+		btnPaste.setBounds(0, 0, 40, 40);
+		btnPaste.setText("Paste");
+		
 		
 		add(btnClear);
 		add(btnUndo);
 		add(btnRedo);
 		add(btnSelect);
 		add(btnEraseO);
+		add(btnResize);
+		add(btnCopy);
+		add(btnPaste);
 		
 		btnClear.addActionListener(new ActionListener() {
 			@Override
@@ -138,6 +154,90 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			}
 				
 		});
+		btnResize.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+					// TODO Auto-generated method stub	
+				if(e.getSource()==btnResize) {
+					Frame.MODE="RESIZE";
+					//////System.out.println("SELECT");
+				}
+				/*for(int i=Frame.list.size()-1;i>=0;i--) {
+					if(Frame.list.get(i).select==true){
+						Frame.list2.add(Frame.list.get(i));
+						Frame.list.remove(i);
+						
+					}
+
+					repaint();
+					
+				}*/
+			}
+				
+		});
+		btnCopy.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+					// TODO Auto-generated method stub	
+				if(e.getSource()==btnCopy) {
+					Frame.MODE="COPY";
+					//////System.out.println("SELECT");
+				}
+				for(int i=Frame.list.size()-1;i>=0;i--) {
+					if(Frame.list.get(i).select==true){
+						o=new Option();
+						
+						o.shape=Frame.list.get(i).shape;
+						o.shapeO=Frame.list.get(i).shapeO;
+						o.start=new Point(Frame.list.get(i).start.x,Frame.list.get(i).start.y);
+						o.end=new Point(Frame.list.get(i).end.x,Frame.list.get(i).end.y);
+						o.pointX=Frame.list.get(i).pointX;
+						o.pointY=Frame.list.get(i).pointY;
+						o.color=new Color(Frame.list.get(i).color.getRGB());
+						o.thick=Frame.list.get(i).thick;
+						o.fill=Frame.list.get(i).fill;
+						for(Point p : Frame.list.get(i).P) {
+							o.P.add(new Point (p.x,p.y));
+						}
+						for(Point ee : Frame.list.get(i).E) {
+							o.E.add(new Point (ee.x,ee.y));
+						}
+						Frame.copy.add(o);
+					}
+
+					repaint();
+					
+				}
+			}
+				
+		});
+		btnPaste.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+					// TODO Auto-generated method stub	
+				if(e.getSource()==btnPaste) {
+					Frame.MODE="PASTE";
+					//////System.out.println("SELECT");
+				}
+				for(int i=0;i<Frame.copy.size();i++) {
+					if(Frame.copy.get(i).shape.equals("PEN")) {
+						for(int j=0;j<Frame.copy.get(i).P.size();j++) {
+							Frame.copy.get(i).P.get(j).x+=20;
+							Frame.copy.get(i).P.get(j).y+=20;
+						}
+					}else {
+						Frame.copy.get(i).start.x+=20;
+						Frame.copy.get(i).start.y+=20;
+						Frame.copy.get(i).end.x+=20;
+						Frame.copy.get(i).end.y+=20;
+					}
+					Frame.list.add(Frame.copy.get(i));
+					repaint();
+				}
+				Frame.copy.clear();
+			}
+				
+		});
 		
 	}
 	
@@ -173,28 +273,74 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			repaint();
 		}
 		if(Frame.selected==true) {
-			for(int i=Frame.list.size()-1;i>=0;i--) {
-				if(Frame.list.get(i).select==true) {
-					Frame.e1=e.getPoint();
-					if(!Frame.list.get(i).shape.equals("PEN")) {
-						Frame.list.get(i).start.x+=(Frame.e1.x-Frame.s1.x);
-						Frame.list.get(i).start.y+=(Frame.e1.y-Frame.s1.y);
-						Frame.list.get(i).end.x+=(Frame.e1.x-Frame.s1.x);
-						Frame.list.get(i).end.y+=(Frame.e1.y-Frame.s1.y);
-					}else {
-						for(int j=0;j<Frame.list.get(i).P.size();j++){
-							Frame.list.get(i).P.get(j).x+=(Frame.e1.x-Frame.s1.x);
-							Frame.list.get(i).P.get(j).y+=(Frame.e1.y-Frame.s1.y);
+			if(Frame.MODE=="SELECT") {
+				for(int i=Frame.list.size()-1;i>=0;i--) {
+					if(Frame.list.get(i).select==true) {
+						Frame.e1=e.getPoint();
+						if(!Frame.list.get(i).shape.equals("PEN")) {
+							Frame.list.get(i).start.x+=(Frame.e1.x-Frame.s1.x);
+							Frame.list.get(i).start.y+=(Frame.e1.y-Frame.s1.y);
+							Frame.list.get(i).end.x+=(Frame.e1.x-Frame.s1.x);
+							Frame.list.get(i).end.y+=(Frame.e1.y-Frame.s1.y);
+						}else {
+							for(int j=1;j<Frame.list.get(i).P.size()-1;j++){
+								Frame.list.get(i).P.get(j).x+=(Frame.e1.x-Frame.s1.x);
+								Frame.list.get(i).P.get(j).y+=(Frame.e1.y-Frame.s1.y);
+							}
 							
-							
+							Frame.list.get(i).start.x+=(Frame.e1.x-Frame.s1.x);
+							Frame.list.get(i).start.y+=(Frame.e1.y-Frame.s1.y);
+							Frame.list.get(i).end.x+=(Frame.e1.x-Frame.s1.x);
+							Frame.list.get(i).end.y+=(Frame.e1.y-Frame.s1.y);
+								
 						}
-							
+						repaint();
+						
 					}
-					repaint();
-					
+					//Frame.s1=Frame.e1;
 				}
+				Frame.s1=Frame.e1;
+				
+			}else if(Frame.MODE=="RESIZE"){
+				System.out.println("HI");
+				for(int i=Frame.list.size()-1;i>=0;i--) {
+					if(Frame.list.get(i).select==true) {
+						Frame.e1=e.getPoint();
+						if(!Frame.list.get(i).shape.equals("PEN")) {
+							System.out.println("s1: "+Frame.s1);
+							System.out.println("e1: "+Frame.e1);
+							if(Frame.list.get(i).start.x < Frame.list.get(i).end.x) {
+								Frame.list.get(i).start.x-=(Math.abs(Frame.e1.x-Frame.s1.x));
+								Frame.list.get(i).end.x+=(Math.abs(Frame.e1.x-Frame.s1.x));
+							}else {
+								Frame.list.get(i).start.x+=(Math.abs(Frame.e1.x-Frame.s1.x));
+								Frame.list.get(i).end.x-=(Math.abs(Frame.e1.x-Frame.s1.x));
+							}
+							if(Frame.list.get(i).start.y < Frame.list.get(i).end.y) {
+								Frame.list.get(i).start.y-=(Math.abs(Frame.e1.y-Frame.s1.y));
+								Frame.list.get(i).end.y+=(Math.abs(Frame.e1.y-Frame.s1.y));
+							}else {
+								Frame.list.get(i).start.y+=(Math.abs(Frame.e1.y-Frame.s1.y));
+								Frame.list.get(i).end.y-=(Math.abs(Frame.e1.y-Frame.s1.y));
+							}
+								
+							
+						}else {
+							for(int j=0;j<Frame.list.get(i).P.size();j++){
+								Frame.list.get(i).P.get(j).x+=(Frame.e1.x-Frame.s1.x);
+								Frame.list.get(i).P.get(j).y+=(Frame.e1.y-Frame.s1.y);
+								
+								
+							}
+								
+						}
+						repaint();
+						
+					}
+				}
+				Frame.s1=Frame.e1;
 			}
-			Frame.s1=Frame.e1;
+			
 		}
 		else if (Frame.newOption.shape.equals("SELECT")) {
 			Frame.tempE = e.getPoint();
@@ -236,20 +382,23 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
-		if (Frame.MODE.equals("SELECT")) {
-			Frame.tempE = e.getPoint();
-		
-			Shape sel = new Rectangle2D.Double(Math.min(Frame.tempS.x,Frame.tempE.x), Math.min(Frame.tempS.y,Frame.tempE.y),
-					Math.abs(Frame.tempE.x - Frame.tempS.x), Math.abs(Frame.tempE.y - Frame.tempS.y));
-			for(int i=Frame.list.size()-1;i>=0;i--) {
-				if(selection(Frame.list.get(i),sel)) {
-					Frame.list.get(i).select=true;
-				}else {
-					Frame.list.get(i).select=false;
+		if(!Frame.MODE.equals("RESIZE")) {
+			if (Frame.MODE.equals("SELECT")) {
+				Frame.tempE = e.getPoint();
+			
+				Shape sel = new Rectangle2D.Double(Math.min(Frame.tempS.x,Frame.tempE.x), Math.min(Frame.tempS.y,Frame.tempE.y),
+						Math.abs(Frame.tempE.x - Frame.tempS.x), Math.abs(Frame.tempE.y - Frame.tempS.y));
+				for(int i=Frame.list.size()-1;i>=0;i--) {
+					if(selection(Frame.list.get(i),sel)) {
+						Frame.list.get(i).select=true;
+					}else {
+						Frame.list.get(i).select=false;
+					}
 				}
+				repaint();
 			}
-			repaint();
 		}
+		
 	}
 
 	@Override
@@ -315,7 +464,34 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 					Frame.sel = false;
 				}
 			}
+			
 			//Frame.newOption.shape = "RESIZE";
+			
+		}
+		if(Frame.MODE=="RESIZE") {
+			Frame.s1=e.getPoint();
+			
+			
+			for(int i=Frame.list.size()-1;i>=0;i--) {
+				Point p;
+				p=e.getPoint();
+				
+				
+				
+				Frame.e1=e.getPoint();
+				Frame.s1=e.getPoint();
+				Shape sel= new Rectangle2D.Double(Math.min(Frame.list.get(i).start.x,Frame.list.get(i).end.x), Math.min(Frame.list.get(i).start.y,Frame.list.get(i).end.y),
+				Math.abs(Frame.list.get(i).end.x - Frame.list.get(i).start.x), Math.abs(Frame.list.get(i).end.x - Frame.list.get(i).start.x));
+			
+				if(sel.contains(p)) {
+					System.out.println("Contains");
+					
+				}
+//				if(selection(Frame.list.get(i),sel)){
+//					s=true;
+//					//System.out.println("error");
+//				}
+			}
 			
 		}
 		
@@ -451,6 +627,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		}
 		
 		
+		
 	}
 
 	@Override
@@ -568,10 +745,10 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 				if(l.select==true) {
 					g2.setStroke(new BasicStroke(1f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER,1f,new float[] {10},2f));
 					g2.setColor(Color.red);
-					for (int i = 0; i < Frame.pointsP.size() - 1; i++) {
-						g2.drawLine(Frame.pointsP.get(i).x, Frame.pointsP.get(i).y, Frame.pointsP.get(i + 1).x,
-								Frame.pointsP.get(i + 1).y);
-					}
+					//for (int i = 0; i < Frame.pointsP.size() - 1; i++) {
+						g2.drawRect(Math.min(l.start.x, l.end.x), Math.min(l.start.y, l.end.y),
+								Math.abs(l.end.x - l.start.x), Math.abs(l.end.y - l.start.y));
+					//}
 				}
 			}
 			if (l.shape.equals("ERASER")) {

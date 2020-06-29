@@ -28,6 +28,7 @@ public class Frame extends JFrame {
 
 	static Point tempS,tempE;
 	static Option newOption;
+	static Option o;
 	
 	static Vector<Option> pointsL = new Vector<Option>();
 	static Vector<Option> pointsR = new Vector<Option>();
@@ -35,12 +36,14 @@ public class Frame extends JFrame {
 
 	static ArrayList<Option> list = new ArrayList<Option>();
 	static Vector<Option> list2 = new Vector<Option>();
+	static ArrayList<Option> copy = new ArrayList<Option>();
 	
 	static Option re = new Option();
 	
 	static Vector<Point> pointsPL = new Vector<Point>();
 	static Vector<Point> pointsP = new Vector<Point>();
 	static Vector<Point> pointsE = new Vector<Point>();
+
 	
 	static boolean sel;
 	static Option cShape;
