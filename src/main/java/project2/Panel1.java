@@ -48,6 +48,11 @@ public class Panel1 extends JPanel {
 		btnOval.setBounds(0, 0, 40, 40);
 		btnOval.setText("Oval");
 		
+		btnEraser= new JButton("Eraser");
+		btnEraser.setBounds(0, 0, 40, 40);
+		btnEraser.setText("Eraser");
+		
+		
 		lThick=new JLabel();
 		lThick.setText("선 굵기");
 		
@@ -66,9 +71,6 @@ public class Panel1 extends JPanel {
 		btnFill.setText("Fill");
 		
 		
-		btnEraser= new JButton("Eraser");
-		btnEraser.setBounds(0, 0, 40, 40);
-		btnEraser.setText("Eraser");
 		
 		
 		
@@ -78,11 +80,12 @@ public class Panel1 extends JPanel {
 		add(btnPoly);
 		add(btnRect);
 		add(btnOval);
+		add(btnEraser);
 		add(lThick);
 		add(tThick);
 		add(btnColor);
 		add(btnFill);
-		add(btnEraser);
+		
 		
 	
 		btnLine.addActionListener(new ActionListener() {

@@ -24,7 +24,7 @@ import javax.swing.SwingConstants;
 
 
 public class Canvas extends JPanel implements MouseListener, MouseMotionListener {
-	static JButton btnClear,btnUndo,btnRedo,btnSelect;
+	static JButton btnClear,btnUndo,btnRedo,btnSelect,btnEraseO;
 	private boolean isDrawing = false;
 	Dimension preferredSize= new Dimension(400,300);
 	
@@ -55,10 +55,17 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		btnSelect.setBounds(0, 0, 40, 40);
 		btnSelect.setText("Select");
 		
+		
+		btnEraseO= new JButton("Erase");
+		btnEraseO.setBounds(0, 0, 40, 40);
+		btnEraseO.setText("Erase");
+		
+		
 		add(btnClear);
 		add(btnUndo);
 		add(btnRedo);
 		add(btnSelect);
+		add(btnEraseO);
 		
 		btnClear.addActionListener(new ActionListener() {
 			@Override
@@ -81,7 +88,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 					Frame.list2.add(Frame.list.get(Frame.list.size()-1));
 					Frame.list.remove(Frame.list.size()-1);
 					repaint();
-					System.out.println("UNDO");
+					////System.out.println("UNDO");
 
 				}
 			}	
@@ -96,7 +103,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 						Frame.list2.remove(Frame.list2.size()-1);
 					}
 					repaint();
-					System.out.println("REDO");
+					////System.out.println("REDO");
 				}
 			}	
 		});
@@ -106,9 +113,30 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 					// TODO Auto-generated method stub	
 				if(e.getSource()==btnSelect) {
 					Frame.MODE="SELECT";
-					System.out.println("SELECT");
+					//////System.out.println("SELECT");
 				}
 			}	
+		});
+		btnEraseO.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+					// TODO Auto-generated method stub	
+				if(e.getSource()==btnEraseO) {
+					Frame.MODE="ERASE";
+					//////System.out.println("SELECT");
+				}
+				for(int i=Frame.list.size()-1;i>=0;i--) {
+					if(Frame.list.get(i).select==true){
+						Frame.list2.add(Frame.list.get(i));
+						Frame.list.remove(i);
+						
+					}
+
+					repaint();
+					
+				}
+			}
+				
 		});
 		
 	}
@@ -144,16 +172,40 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			Frame.list.get(Frame.list.size() - 1).end = e.getPoint();
 			repaint();
 		}
-		
-		if (Frame.newOption.shape.equals("SELECT")) {
+		if(Frame.selected==true) {
+			for(int i=Frame.list.size()-1;i>=0;i--) {
+				if(Frame.list.get(i).select==true) {
+					Frame.e1=e.getPoint();
+					if(!Frame.list.get(i).shape.equals("PEN")) {
+						Frame.list.get(i).start.x+=(Frame.e1.x-Frame.s1.x);
+						Frame.list.get(i).start.y+=(Frame.e1.y-Frame.s1.y);
+						Frame.list.get(i).end.x+=(Frame.e1.x-Frame.s1.x);
+						Frame.list.get(i).end.y+=(Frame.e1.y-Frame.s1.y);
+					}else {
+						for(int j=0;j<Frame.list.get(i).P.size();j++){
+							Frame.list.get(i).P.get(j).x+=(Frame.e1.x-Frame.s1.x);
+							Frame.list.get(i).P.get(j).y+=(Frame.e1.y-Frame.s1.y);
+							
+							
+						}
+							
+					}
+					repaint();
+					
+				}
+			}
+			Frame.s1=Frame.e1;
+		}
+		else if (Frame.newOption.shape.equals("SELECT")) {
 			Frame.tempE = e.getPoint();
-			repaint();
-			//System.out.println("end"+Frame.end);
+			//repaint();
+			//////System.out.println("end"+Frame.end);
 			Shape sel = new Rectangle2D.Double(Math.min(Frame.tempS.x,Frame.tempE.x), Math.min(Frame.tempS.y,Frame.tempE.y),
 					Math.abs(Frame.tempE.x - Frame.tempS.x), Math.abs(Frame.tempE.y - Frame.tempS.y));
 			for(int i=Frame.list.size()-1;i>=0;i--) {
 				if(selection(Frame.list.get(i),sel)) {
 					Frame.list.get(i).select=true;
+					System.out.println("sel");
 					System.out.println(i);
 					//Frame.sel2=true;
 				}else {
@@ -162,6 +214,10 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			}
 			repaint();
 		}
+		
+	
+		
+		
 	}
 	
 
@@ -182,15 +238,12 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		// TODO Auto-generated method stub
 		if (Frame.MODE.equals("SELECT")) {
 			Frame.tempE = e.getPoint();
-			//repaint();
-			System.out.println("end"+Frame.tempE);
+		
 			Shape sel = new Rectangle2D.Double(Math.min(Frame.tempS.x,Frame.tempE.x), Math.min(Frame.tempS.y,Frame.tempE.y),
 					Math.abs(Frame.tempE.x - Frame.tempS.x), Math.abs(Frame.tempE.y - Frame.tempS.y));
 			for(int i=Frame.list.size()-1;i>=0;i--) {
 				if(selection(Frame.list.get(i),sel)) {
-					System.out.println(i);
 					Frame.list.get(i).select=true;
-					//Frame.sel2=true;
 				}else {
 					Frame.list.get(i).select=false;
 				}
@@ -230,17 +283,48 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		if (Frame.MODE.equals("ERASER")) {
 			Frame.newOption.shape = "ERASER";
 		}
+		//System.out.println("Mode: "+Frame.MODE+"Selected: "+Frame.selected);
 		if (Frame.MODE.equals("SELECT")) {
+			if(Frame.selected==false) {
+				//System.out.println("Inside");
+				Frame.sel=true;
+				//System.out.println("sel: ");
+				boolean s=false;
+				////System.out.println(Frame.start);
+				//Shape rectShape = new Rectangle2D.Double();
+				for(int i=Frame.list.size()-1;i>=0;i--) {
+					Point p;
+					p=e.getPoint();
+					Frame.e1=e.getPoint();
+					Frame.s1=e.getPoint();
+					Shape sel= new Rectangle2D.Double(Math.min(Frame.list.get(i).start.x,Frame.list.get(i).end.x), Math.min(Frame.list.get(i).start.y,Frame.list.get(i).end.y),
+					Math.abs(Frame.list.get(i).end.x - Frame.list.get(i).start.x), Math.abs(Frame.list.get(i).end.x - Frame.list.get(i).start.x));
+				
+					if(sel.contains(p)) {
+						System.out.println("Contains");
+						s=true;
+					}
+//					if(selection(Frame.list.get(i),sel)){
+//						s=true;
+//						//System.out.println("error");
+//					}
+				}
+				if(s==true) {
+					System.out.println("inside s==true");
+					Frame.selected=true;
+					Frame.sel = false;
+				}
+			}
 			//Frame.newOption.shape = "RESIZE";
-			Frame.sel=true;
-			Frame.tempS=e.getPoint();
-			System.out.println(Frame.start);
+			
 		}
+		
 		
 		
 		if (Frame.newOption.shape.equals("LINE")) {
 			Frame.newOption.start = e.getPoint();
 			Frame.list.add(Frame.newOption);
+			
 		}
 /*
 		if (Frame.newOption.shape.equals("POLYLINE")) {
@@ -252,19 +336,16 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 				// pressed값 저장
 				Frame.pointsPL.add(Frame.start);
 				isDrawing = !isDrawing;
-
 			} else {
 				// Frame.cShape.start=Frame.start;
 				// Frame.cShape.end=Frame.end;
 				// Frame.pointsPL.add(Frame.cShape);
 				// Frame.pointsPL.add(Frame.start);
 				// Frame.pointsPL.add(Frame.end);
-
 				// Frame.newOption.start=Frame.list.get(Frame.list.size()-1).start;
 				// Frame.newOption.end=Frame.list.get(Frame.list.size()-1).end;
 				// Frame.list.get(Frame.list.size()-1).start =
 				// Frame.list.get(Frame.list.size()-1).start;
-
 				Frame.pointsPL.add(Frame.end);
 				Frame.pointsPL.add(Frame.start);
 				Frame.start = Frame.end;
@@ -294,6 +375,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			
 			
 		}*/
+	
 		
 	
 	}
@@ -312,12 +394,9 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 				// Frame.start = null;
 				// Frame.end = null;
 				isDrawing = false;
-
 				Frame.pointsPL.add(Frame.end);
-
 				Frame.start = null;
 				Frame.end = null;
-
 				int i = 0;
 				for (Point p : Frame.pointsPL) {
 					Frame.newOption.pointX[i] = (int) p.getX();
@@ -345,6 +424,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			for (Point p : Frame.pointsP) {
 				Frame.newOption.P.add(p);
 			}
+			Frame.newOption.start=Frame.pointsP.get(0);
+			Frame.newOption.end=Frame.pointsP.get(Frame.pointsP.size()-1);
 			Frame.pointsP.clear();
 
 		}
@@ -365,7 +446,9 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 			Frame.sel=false;
 			repaint();
 		}
-		 
+		if(Frame.selected==true) {
+			Frame.selected=false;
+		}
 		
 		
 	}
@@ -386,8 +469,10 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D) g;
-		
+		//System.out.println(Frame.sel);
 		if(Frame.sel) {
+			////System.out.printf("%d %d %d %d\n", Frame.tempS.x, Frame.tempS.y, Frame.tempE.x, Frame.tempE.y);
+			System.out.println("selector box");
 			g2.setColor(Color.BLUE);
 			g2.drawRect(Math.min(Frame.tempS.x, Frame.tempE.x), Math.min(Frame.tempS.y, Frame.tempE.y),
 								Math.abs(Frame.tempE.x - Frame.tempS.x), Math.abs(Frame.tempE.y - Frame.tempS.y));
@@ -400,6 +485,12 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 				g2.setColor(l.color);
 				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 				g2.drawLine(l.start.x, l.start.y, l.end.x, l.end.y);
+				if(l.select==true) {
+					g2.setStroke(new BasicStroke(1f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER,1f,new float[] {10},2f));
+					g2.setColor(Color.red);
+					g2.drawRect(Math.min(l.start.x, l.end.x), Math.min(l.start.y, l.end.y),
+							Math.abs(l.end.x - l.start.x), Math.abs(l.end.y - l.start.y));
+				}
 			}
 			if (l.shape.equals("POLYLINE")) {
 				
@@ -474,6 +565,14 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 				if (Frame.start != null) {
 					g2.drawLine(Frame.start.x, Frame.start.y, Frame.end.x, Frame.end.y);
 				}
+				if(l.select==true) {
+					g2.setStroke(new BasicStroke(1f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER,1f,new float[] {10},2f));
+					g2.setColor(Color.red);
+					for (int i = 0; i < Frame.pointsP.size() - 1; i++) {
+						g2.drawLine(Frame.pointsP.get(i).x, Frame.pointsP.get(i).y, Frame.pointsP.get(i + 1).x,
+								Frame.pointsP.get(i + 1).y);
+					}
+				}
 			}
 			if (l.shape.equals("ERASER")) {
 				
@@ -504,6 +603,13 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 		}else if(temp.shape.equals("OVAL")) {	
 			temp.shapeO=new Rectangle2D.Double(Math.min(temp.start.x,temp.end.x), Math.min(temp.start.y,temp.end.y),
 						Math.abs(temp.end.x -temp.start.x), Math.abs(temp.end.y - temp.start.y));
+		}else if(temp.shape.equals("LINE")) {	
+			temp.shapeO=new Rectangle2D.Double(Math.min(temp.start.x,temp.end.x), Math.min(temp.start.y,temp.end.y),
+					Math.abs(temp.end.x -temp.start.x), Math.abs(temp.end.y - temp.start.y));
+		}else if(temp.shape.equals("PEN")) {	
+			temp.shapeO=new Rectangle2D.Double(Math.min(temp.start.x,temp.end.x), Math.min(temp.start.y,temp.end.y),
+					Math.abs(temp.end.x -temp.start.x), Math.abs(temp.end.y - temp.start.y));
+		
 		}
 		else {
 			return false;

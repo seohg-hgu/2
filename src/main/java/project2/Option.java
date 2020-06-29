@@ -24,8 +24,8 @@ public class Option {
 	public Option() {
 		color=new Color(0,0,0);
 		fill=false;
-		pointX=new int[30];
-		pointY=new int[30];
+		pointX=new int[1000];
+		pointY=new int[1000];
 		P= new Vector<Point>();
 		E= new Vector<Point>();
 		shape="SELECT";

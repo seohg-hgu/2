@@ -50,6 +50,9 @@ public class Frame extends JFrame {
 	static boolean oFill=false;
 	static boolean clear=false;
 	
+	static boolean selected=false;
+	static Point s1, e1;
+	
 	
 	
 	public Frame(){
