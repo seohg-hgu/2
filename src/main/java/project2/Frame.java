@@ -30,15 +30,12 @@ public class Frame extends JFrame {
 	static Option newOption;
 	static Option o;
 	
-	static Vector<Option> pointsL = new Vector<Option>();
-	static Vector<Option> pointsR = new Vector<Option>();
-	static Vector<Option> pointsO = new Vector<Option>();
+	
 
 	static ArrayList<Option> list = new ArrayList<Option>();
 	static Vector<Option> list2 = new Vector<Option>();
 	static ArrayList<Option> copy = new ArrayList<Option>();
 	
-	static Option re = new Option();
 	
 	static Vector<Point> pointsPL = new Vector<Point>();
 	static Vector<Point> pointsP = new Vector<Point>();
@@ -54,6 +51,7 @@ public class Frame extends JFrame {
 	static boolean clear=false;
 	
 	static boolean selected=false;
+	static boolean resize=false;
 	static Point s1, e1;
 	
 	
@@ -82,7 +80,7 @@ public class Frame extends JFrame {
 		
 	}
 	public static void createFrame(JFrame f) {
-		f.setSize(700,700);
+		f.setSize(750,700);
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.setVisible(true);	
 	}

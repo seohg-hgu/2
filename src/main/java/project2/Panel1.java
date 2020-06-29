@@ -13,21 +13,26 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JColorChooser;
+import javax.swing.JFileChooser;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileSystemView;
+import javax.swing.plaf.FileChooserUI;
+
 
 public class Panel1 extends JPanel {
 	static JPanel p;
 	static JButton btnLine,btnPen,btnPoly,btnRect,btnOval,btnColor,btnFill,btnEraser;
 	
+  
 	static JLabel lThick;
 	static JTextField tThick=null; 
 	static JColorChooser colorChooser;
-
+	static JLabel label; 
 	
 	public Panel1() {
 		setBackground(Color.white);
-		setBounds(0,0,700,50);
+		setBounds(0,0,750,50);
 		btnLine= new JButton("Line");
 		btnLine.setBounds(0, 0, 40, 40);
 		btnLine.setText("Line");
@@ -51,6 +56,8 @@ public class Panel1 extends JPanel {
 		btnEraser= new JButton("Eraser");
 		btnEraser.setBounds(0, 0, 40, 40);
 		btnEraser.setText("Eraser");
+		
+	
 		
 		
 		lThick=new JLabel();
@@ -77,7 +84,7 @@ public class Panel1 extends JPanel {
 		
 		add(btnLine);
 		add(btnPen);
-		add(btnPoly);
+		//add(btnPoly);
 		add(btnRect);
 		add(btnOval);
 		add(btnEraser);
@@ -85,7 +92,7 @@ public class Panel1 extends JPanel {
 		add(tThick);
 		add(btnColor);
 		add(btnFill);
-		
+	
 		
 	
 		btnLine.addActionListener(new ActionListener() {
@@ -200,6 +207,7 @@ public class Panel1 extends JPanel {
 				}
 			}	
 		});
+		
 		
 		
 		
